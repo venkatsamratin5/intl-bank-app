@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  # --- YOUR BANK APPLICATION TIER ---
+  tomcat1:
+    build: .
+    image: mycustomcatimage:v1
+    container_name: tomcatcont1
+    ports: ["8080:8080"]
+
+  tomcat2:
+    image: mycustomcatimage:v1
+    container_name: tomcatcont2
+    ports: ["8081:8080"]
+    depends_on: [tomcat1]
+
+  tomcat3:
+    image: mycustomcatimage:v1
+    container_name: tomcatcont3
+    ports: ["8082:8080"]
+    depends_on: [tomcat1]
+
+  tomcat4:
+    image: mycustomcatimage:v1
+    container_name: tomcatcont4
+    ports: ["8083:8080"]
+    depends_on: [tomcat1]
+
+  apachewebserver:
+    image: httpd:2.4
+    container_name: apachecont1
+    ports: ["80:80"]
+    volumes:
+      - ./httpd.conf:/usr/local/apache2/conf/httpd.conf
+    depends_on: [tomcat1, tomcat2, tomcat3, tomcat4]
+
+  # --- STUNNING VISUALS TIER ---
+
+  # cAdvisor: Watches your 4 Tomcats in real-time
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    container_name: bank-monitor-collector
+    ports: ["8084:8080"]
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+
+  # Grafana: The Beautiful Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: bank-visual-dashboard
+    ports: ["3000:3000"]
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=bankadmin
+    depends_on: [cadvisor]
