@@ -1,5 +1,5 @@
-url's http://<publicip:80
-Grafana Dashboards: http://<publicip>:3000 (Login: admin / bankadmin)
+Url's http://<publicip>:80
+Grafana Dashboards: http://<publicip>:3000 (admin/bankadmin)
 cAdvisor Metrics: http://<publicip>:8084
 
 If you need to check a specific server directly, use the Public IP with these ports:
