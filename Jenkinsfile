@@ -11,7 +11,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/venkatsamratin5/intl-bank-app.git'
+                git branch: 'main', url: 'https://github.com/venkatsamratin5/intl-bank-app.git'
             }
         }
 
